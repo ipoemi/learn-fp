@@ -4,8 +4,8 @@ import org.scalatest.{Matchers, WordSpecLike}
 
 import learnfp.monad.MonadOps.toMonadOpsPure
 
-import learnfp.transformer.WriterT._
-import learnfp.transformer.StateT._
+import WriterT._
+import StateT._
 import learnfp.functor.Maybe._
 import learnfp.functor.MaybeInstance._
 import learnfp.monad.MaybeInstance._
@@ -22,13 +22,19 @@ class TransformerStackTest extends WordSpecLike with Matchers {
         for {
           x <- 10.pure[App]
           // TODO: tell "een"
+          _ <- StateT.lift[String, OuterT, Unit](tell(List("een")))
           // TODO: put state "one"
+          _ <- putT[String, OuterT]("one")
           y <- 20.pure[App]
           // TODO: tell "twee"
+          _ <- StateT.lift[String, OuterT, Unit](tell(List("twee")))
           // TODO: put state "two"
+          _ <- putT[String, OuterT]("two")
           z <- 30.pure[App]
           // TODO: tell "drie"
+          _ <- StateT.lift[String, OuterT, Unit](tell(List("drie")))
           // TODO: put state "three"
+          _ <- putT[String, OuterT]("three")
         } yield x
       }.runStateT("null").runWriterT() match {
         case Just(v) => v shouldBe (List("een", "twee", "drie"), ("three", 10))
